@@ -1,0 +1,1017 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API &mdash; python-multipart 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="python-multipart 0.0.1 documentation" href="index.html" />
+    <link rel="prev" title="Quickstart" href="quickstart.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+  
+  
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="quickstart.html" title="Quickstart"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">python-multipart 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="api">
+<span id="id1"></span><h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-multipart"></span><p>This section of the documentation covers all of the public interfaces of
+python-multipart.</p>
+<div class="section" id="main-class">
+<h2>Main Class<a class="headerlink" href="#main-class" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="multipart.multipart.FormParser">
+<em class="property">class </em><tt class="descclassname">multipart.multipart.</tt><tt class="descname">FormParser</tt><big>(</big><em>content_type</em>, <em>on_field</em>, <em>on_file</em>, <em>on_end=None</em>, <em>boundary=None</em>, <em>file_name=None</em>, <em>FileClass=&lt;class 'multipart.multipart.File'&gt;</em>, <em>FieldClass=&lt;class 'multipart.multipart.Field'&gt;</em>, <em>config={}</em><big>)</big><a class="headerlink" href="#multipart.multipart.FormParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is the all-in-one form parser.  Given all the information
+necessary to parse a form, it will instantiate the correct parser, create
+the proper <a class="reference internal" href="#multipart.multipart.Field" title="multipart.multipart.Field"><tt class="xref py py-class docutils literal"><span class="pre">Field</span></tt></a> and <a class="reference internal" href="#multipart.multipart.File" title="multipart.multipart.File"><tt class="xref py py-class docutils literal"><span class="pre">File</span></tt></a> classes to store the data that
+is parsed, and call the two given callbacks with each field and file as
+they become available.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>content_type</strong> &#8211; The Content-Type of the incoming request.  This is
+used to select the appropriate parser.</li>
+<li><strong>on_field</strong> &#8211; The callback to call when a field has been parsed and is
+ready for usage.  See above for parameters.</li>
+<li><strong>on_file</strong> &#8211; The callback to call when a file has been parsed and is
+ready for usage.  See above for parameters.</li>
+<li><strong>on_end</strong> &#8211; An optional callback to call when all fields and files in a
+request has been parsed.  Can be None.</li>
+<li><strong>boundary</strong> &#8211; If the request is a multipart/form-data request, this
+should be the boundary of the request, as given in the
+Content-Type header, as a bytestring.</li>
+<li><strong>file_name</strong> &#8211; If the request is of type application/octet-stream, then
+the body of the request will not contain any information
+about the uploaded file.  In such cases, you can provide
+the file name of the uploaded file manually.</li>
+<li><strong>FileClass</strong> &#8211; <p>The class to use for uploaded files.  Defaults to
+<a class="reference internal" href="#multipart.multipart.File" title="multipart.multipart.File"><tt class="xref py py-class docutils literal"><span class="pre">File</span></tt></a>, but you can provide your own class if you
+wish to customize behaviour.  The class will be
+instantiated as FileClass(file_name, field_name), and it
+must provide the folllowing functions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">file_instance</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">file_instance</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="n">file_instance</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><strong>FieldClass</strong> &#8211; <p>The class to use for uploaded fields.  Defaults to
+<a class="reference internal" href="#multipart.multipart.Field" title="multipart.multipart.Field"><tt class="xref py py-class docutils literal"><span class="pre">Field</span></tt></a>, but you can provide your own class if
+you wish to customize behaviour.  The class will be
+instantiated as FieldClass(field_name), and it must
+provide the folllowing functions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">field_instance</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">field_instance</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="n">field_instance</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><strong>config</strong> &#8211; Configuration to use for this FormParser.  The default
+values are taken from the DEFAULT_CONFIG value, and then
+any keys present in this dictionary will overwrite the
+default values.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="multipart.multipart.FormParser.DEFAULT_CONFIG">
+<tt class="descname">DEFAULT_CONFIG</tt><em class="property"> = {'UPLOAD_DIR': None, 'UPLOAD_KEEP_FILENAME': False, 'MAX_BODY_SIZE': inf, 'MAX_MEMORY_FILE_SIZE': 1048576, 'UPLOAD_ERROR_ON_BAD_CTE': False, 'UPLOAD_KEEP_EXTENSIONS': False}</em><a class="headerlink" href="#multipart.multipart.FormParser.DEFAULT_CONFIG" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the default configuration for our form parser.
+Note: all file sizes should be in bytes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.FormParser.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.FormParser.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the parser.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.FormParser.finalize">
+<tt class="descname">finalize</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.FormParser.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize the parser.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.FormParser.write">
+<tt class="descname">write</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#multipart.multipart.FormParser.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write some data.  The parser will forward this to the appropriate
+underlying parser.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; a bytestring</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="parsers">
+<h2>Parsers<a class="headerlink" href="#parsers" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="multipart.multipart.BaseParser">
+<em class="property">class </em><tt class="descclassname">multipart.multipart.</tt><tt class="descname">BaseParser</tt><a class="headerlink" href="#multipart.multipart.BaseParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is the base class for all parsers.  It contains the logic for
+calling and adding callbacks.</p>
+<p>A callback can be one of two different forms.  &#8220;Notification callbacks&#8221; are
+callbacks that are called when something happens - for example, when a new
+part of a multipart message is encountered by the parser.  &#8220;Data callbacks&#8221;
+are called when we get some sort of data - for example, part of the body of
+a multipart chunk.  Notification callbacks are called with no parameters,
+whereas data callbacks are called with three, as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">data_callback</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The &#8220;data&#8221; parameter is a bytestring (i.e. &#8220;foo&#8221; on Python 2, or b&#8221;foo&#8221; on
+Python 3).  &#8220;start&#8221; and &#8220;end&#8221; are integer indexes into the &#8220;data&#8221; string
+that represent the data of interest.  Thus, in a data callback, the slice
+<cite>data[start:end]</cite> represents the data that the callback is &#8220;interested in&#8221;.
+The callback is not passed a copy of the data, since copying severely hurts
+performance.</p>
+<dl class="method">
+<dt id="multipart.multipart.BaseParser.callback">
+<tt class="descname">callback</tt><big>(</big><em>name</em>, <em>data=None</em>, <em>start=None</em>, <em>end=None</em><big>)</big><a class="headerlink" href="#multipart.multipart.BaseParser.callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calls a provided callback with some data.  If the
+callback is not set, will do nothing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; The name of the callback to call (as a string).</li>
+<li><strong>data</strong> &#8211; Data to pass to the callback.  If None, then it is
+assumed that the callback is a notification callback,
+and no parameters are given.</li>
+<li><strong>end</strong> &#8211; An integer that is passed to the data callback.</li>
+<li><strong>start</strong> &#8211; An integer that is passed to the data callback.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.BaseParser.set_callback">
+<tt class="descname">set_callback</tt><big>(</big><em>name</em>, <em>new_func</em><big>)</big><a class="headerlink" href="#multipart.multipart.BaseParser.set_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the function for a callback.  Removes from the callbacks dict
+if new_func is None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; The name of the callback to call (as a string).</li>
+<li><strong>new_func</strong> &#8211; The new function for the callback.  If None, then the
+callback will be removed (with no error if it does not
+exist).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="multipart.multipart.OctetStreamParser">
+<em class="property">class </em><tt class="descclassname">multipart.multipart.</tt><tt class="descname">OctetStreamParser</tt><big>(</big><em>callbacks={}</em>, <em>max_size=inf</em><big>)</big><a class="headerlink" href="#multipart.multipart.OctetStreamParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>This parser parses an octet-stream request body and calls callbacks when
+incoming data is received.  Callbacks are as follows:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="18%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Callback Name</th>
+<th class="head">Parameters</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>on_start</td>
+<td>None</td>
+<td>Called when the first data is parsed.</td>
+</tr>
+<tr class="row-odd"><td>on_data</td>
+<td>data, start, end</td>
+<td>Called for each data chunk that is parsed.</td>
+</tr>
+<tr class="row-even"><td>on_end</td>
+<td>None</td>
+<td>Called when the parser is finished parsing all data.</td>
+</tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callbacks</strong> &#8211; A dictionary of callbacks.  See the documentation for
+<a class="reference internal" href="#multipart.multipart.BaseParser" title="multipart.multipart.BaseParser"><tt class="xref py py-class docutils literal"><span class="pre">BaseParser</span></tt></a>.</li>
+<li><strong>max_size</strong> &#8211; The maximum size of body to parse.  Defaults to infinity -
+i.e. unbounded.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="multipart.multipart.OctetStreamParser.finalize">
+<tt class="descname">finalize</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.OctetStreamParser.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize this parser, which signals to that we are finished parsing,
+and sends the on_end callback.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.OctetStreamParser.write">
+<tt class="descname">write</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#multipart.multipart.OctetStreamParser.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write some data to the parser, which will perform size verification,
+and then pass the data to the underlying callback.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; a bytestring</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="multipart.multipart.QuerystringParser">
+<em class="property">class </em><tt class="descclassname">multipart.multipart.</tt><tt class="descname">QuerystringParser</tt><big>(</big><em>callbacks={}</em>, <em>strict_parsing=False</em>, <em>max_size=inf</em><big>)</big><a class="headerlink" href="#multipart.multipart.QuerystringParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a streaming querystring parser.  It will consume data, and call
+the callbacks given when it has data.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="18%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Callback Name</th>
+<th class="head">Parameters</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>on_field_start</td>
+<td>None</td>
+<td>Called when a new field is encountered.</td>
+</tr>
+<tr class="row-odd"><td>on_field_name</td>
+<td>data, start, end</td>
+<td>Called when a portion of a field&#8217;s name is encountered.</td>
+</tr>
+<tr class="row-even"><td>on_field_data</td>
+<td>data, start, end</td>
+<td>Called when a portion of a field&#8217;s data is encountered.</td>
+</tr>
+<tr class="row-odd"><td>on_field_end</td>
+<td>None</td>
+<td>Called when the end of a field is encountered.</td>
+</tr>
+<tr class="row-even"><td>on_end</td>
+<td>None</td>
+<td>Called when the parser is finished parsing all data.</td>
+</tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callbacks</strong> &#8211; A dictionary of callbacks.  See the documentation for
+<a class="reference internal" href="#multipart.multipart.BaseParser" title="multipart.multipart.BaseParser"><tt class="xref py py-class docutils literal"><span class="pre">BaseParser</span></tt></a>.</li>
+<li><strong>strict_parsing</strong> &#8211; Whether or not to parse the body strictly.  Defaults
+to False.  If this is set to True, then the behavior
+of the parser changes as the following: if a field
+has a value with an equal sign (e.g. &#8220;foo=bar&#8221;, or
+&#8220;foo=&#8221;), it is always included.  If a field has no
+equals sign (e.g. &#8221;...&amp;name&amp;...&#8221;), it will be
+treated as an error if &#8216;strict_parsing&#8217; is True,
+otherwise included.  If an error is encountered,
+then a
+<a class="reference internal" href="#multipart.exceptions.QuerystringParseError" title="multipart.exceptions.QuerystringParseError"><tt class="xref py py-class docutils literal"><span class="pre">multipart.exceptions.QuerystringParseError</span></tt></a>
+will be raised.</li>
+<li><strong>max_size</strong> &#8211; The maximum size of body to parse.  Defaults to infinity -
+i.e. unbounded.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="multipart.multipart.QuerystringParser.finalize">
+<tt class="descname">finalize</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.QuerystringParser.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize this parser, which signals to that we are finished parsing,
+if we&#8217;re still in the middle of a field, an on_field_end callback, and
+then the on_end callback.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.QuerystringParser.write">
+<tt class="descname">write</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#multipart.multipart.QuerystringParser.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write some data to the parser, which will perform size verification,
+parse into either a field name or value, and then pass the
+corresponding data to the underlying callback.  If an error is
+encountered while parsing, a QuerystringParseError will be raised.  The
+&#8220;offset&#8221; attribute of the raised exception will be set to the offset in
+the input data chunk (NOT the overall stream) that caused the error.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; a bytestring</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="multipart.multipart.MultipartParser">
+<em class="property">class </em><tt class="descclassname">multipart.multipart.</tt><tt class="descname">MultipartParser</tt><big>(</big><em>boundary</em>, <em>callbacks={}</em>, <em>max_size=inf</em><big>)</big><a class="headerlink" href="#multipart.multipart.MultipartParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is a streaming multipart/form-data parser.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="18%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Callback Name</th>
+<th class="head">Parameters</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>on_part_begin</td>
+<td>None</td>
+<td>Called when a new part of the multipart message is encountered.</td>
+</tr>
+<tr class="row-odd"><td>on_part_data</td>
+<td>data, start, end</td>
+<td>Called when a portion of a part&#8217;s data is encountered.</td>
+</tr>
+<tr class="row-even"><td>on_part_end</td>
+<td>None</td>
+<td>Called when the end of a part is reached.</td>
+</tr>
+<tr class="row-odd"><td>on_header_begin</td>
+<td>None</td>
+<td>Called when we&#8217;ve found a new header in a part of a multipart
+message</td>
+</tr>
+<tr class="row-even"><td>on_header_field</td>
+<td>data, start, end</td>
+<td>Called each time an additional portion of a header is read (i.e. the
+part of the header that is before the colon; the &#8220;Foo&#8221; in
+&#8220;Foo: Bar&#8221;).</td>
+</tr>
+<tr class="row-odd"><td>on_header_value</td>
+<td>data, start, end</td>
+<td>Called when we get data for a header.</td>
+</tr>
+<tr class="row-even"><td>on_header_end</td>
+<td>None</td>
+<td>Called when the current header is finished - i.e. we&#8217;ve reached the
+newline at the end of the header.</td>
+</tr>
+<tr class="row-odd"><td>on_headers_finished</td>
+<td>None</td>
+<td>Called when all headers are finished, and before the part data
+starts.</td>
+</tr>
+<tr class="row-even"><td>on_end</td>
+<td>None</td>
+<td>Called when the parser is finished parsing all data.</td>
+</tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>boundary</strong> &#8211; The multipart boundary.  This is required, and must match
+what is given in the HTTP request - usually in the
+Content-Type header.</li>
+<li><strong>callbacks</strong> &#8211; A dictionary of callbacks.  See the documentation for
+<a class="reference internal" href="#multipart.multipart.BaseParser" title="multipart.multipart.BaseParser"><tt class="xref py py-class docutils literal"><span class="pre">BaseParser</span></tt></a>.</li>
+<li><strong>max_size</strong> &#8211; The maximum size of body to parse.  Defaults to infinity -
+i.e. unbounded.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="multipart.multipart.MultipartParser.finalize">
+<tt class="descname">finalize</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.MultipartParser.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize this parser, which signals to that we are finished parsing.</p>
+<p>Note: It does not currently, but in the future, it will verify that we
+are in the final state of the parser (i.e. the end of the multipart
+message is well-formed), and, if not, throw an error.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.MultipartParser.write">
+<tt class="descname">write</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#multipart.multipart.MultipartParser.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write some data to the parser, which will perform size verification,
+and then parse the data into the appropriate location (e.g. header,
+data, etc.), and pass this on to the underlying callback.  If an error
+is encountered, a MultipartParseError will be raised.  The &#8220;offset&#8221;
+attribute on the raised exception will be set to the offset of the byte
+in the input chunk that caused the error.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; a bytestring</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="support-classes">
+<h2>Support Classes<a class="headerlink" href="#support-classes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="multipart.multipart.Field">
+<em class="property">class </em><tt class="descclassname">multipart.multipart.</tt><tt class="descname">Field</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#multipart.multipart.Field" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Field object represents a (parsed) form field.  It represents a single
+field with a corresponding name and value.</p>
+<p>The name that a <a class="reference internal" href="#multipart.multipart.Field" title="multipart.multipart.Field"><tt class="xref py py-class docutils literal"><span class="pre">Field</span></tt></a> will be instantiated with is the same name
+that would be found in the following HTML:</p>
+<div class="highlight-python"><pre>&lt;input name="name_goes_here" type="text"/&gt;</pre>
+</div>
+<p>This class defines two methods, <a class="reference internal" href="#multipart.multipart.Field.on_data" title="multipart.multipart.Field.on_data"><tt class="xref py py-meth docutils literal"><span class="pre">on_data()</span></tt></a> and <a class="reference internal" href="#multipart.multipart.Field.on_end" title="multipart.multipart.Field.on_end"><tt class="xref py py-meth docutils literal"><span class="pre">on_end()</span></tt></a>, that
+will be called when data is written to the Field, and when the Field is
+finalized, respectively.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> &#8211; the name of the form field</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="multipart.multipart.Field.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.Field.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the Field object.  This will free any underlying cache.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="multipart.multipart.Field.field_name">
+<tt class="descname">field_name</tt><a class="headerlink" href="#multipart.multipart.Field.field_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>This property returns the name of the field.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.Field.finalize">
+<tt class="descname">finalize</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.Field.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize the form field.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="multipart.multipart.Field.from_value">
+<em class="property">classmethod </em><tt class="descname">from_value</tt><big>(</big><em>klass</em>, <em>name</em>, <em>value</em><big>)</big><a class="headerlink" href="#multipart.multipart.Field.from_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an instance of a <a class="reference internal" href="#multipart.multipart.Field" title="multipart.multipart.Field"><tt class="xref py py-class docutils literal"><span class="pre">Field</span></tt></a>, and set the corresponding
+value - either None or an actual value.  This method will also
+finalize the Field itself.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; the name of the form field</li>
+<li><strong>value</strong> &#8211; the value of the form field - either a bytestring or
+None</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.Field.on_data">
+<tt class="descname">on_data</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#multipart.multipart.Field.on_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is a callback that will be called whenever data is
+written to the Field.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; a bytestring</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.Field.on_end">
+<tt class="descname">on_end</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.Field.on_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is called whenever the Field is finalized.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.Field.set_none">
+<tt class="descname">set_none</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.Field.set_none" title="Permalink to this definition">¶</a></dt>
+<dd><p>Some fields in a querystring can possibly have a value of None - for
+example, the string &#8220;foo&amp;bar=&amp;baz=asdf&#8221; will have a field with the
+name &#8220;foo&#8221; and value None, one with name &#8220;bar&#8221; and value &#8220;&#8221;, and one
+with name &#8220;baz&#8221; and value &#8220;asdf&#8221;.  Since the write() interface doesn&#8217;t
+support writing None, this function will set the field value to None.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="multipart.multipart.Field.value">
+<tt class="descname">value</tt><a class="headerlink" href="#multipart.multipart.Field.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>This property returns the value of the form field.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.Field.write">
+<tt class="descname">write</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#multipart.multipart.Field.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write some data into the form field.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; a bytestring</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="multipart.multipart.File">
+<em class="property">class </em><tt class="descclassname">multipart.multipart.</tt><tt class="descname">File</tt><big>(</big><em>file_name</em>, <em>field_name=None</em>, <em>config={}</em><big>)</big><a class="headerlink" href="#multipart.multipart.File" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents an uploaded file.  It handles writing file data to
+either an in-memory file or a temporary file on-disk, if the optional
+threshold is passed.</p>
+<p>There are some options that can be passed to the File to change behavior
+of the class.  Valid options are as follows:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="9%" />
+<col width="9%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Type</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>UPLOAD_DIR</td>
+<td><cite>str</cite></td>
+<td>None</td>
+<td>The directory to store uploaded files in.  If this is None, a
+temporary file will be created in the system&#8217;s standard location.</td>
+</tr>
+<tr class="row-odd"><td>UPLOAD_KEEP_FILENAME</td>
+<td><cite>bool</cite></td>
+<td>False</td>
+<td>Whether or not to keep the filename of the uploaded file.  If True,
+then the filename will be converted to a safe representation (e.g.
+by removing any invalid path segments), and then saved with the
+same name).  Otherwise, a temporary name will be used.</td>
+</tr>
+<tr class="row-even"><td>UPLOAD_KEEP_EXTENSIONS</td>
+<td><cite>bool</cite></td>
+<td>False</td>
+<td>Whether or not to keep the uploaded file&#8217;s extension.  If False, the
+file will be saved with the default temporary extension (usually
+&#8221;.tmp&#8221;).  Otherwise, the file&#8217;s extension will be maintained.  Note
+that this will properly combine with the UPLOAD_KEEP_FILENAME
+setting.</td>
+</tr>
+<tr class="row-odd"><td>MAX_MEMORY_FILE_SIZE</td>
+<td><cite>int</cite></td>
+<td>1 MiB</td>
+<td>The maximum number of bytes of a File to keep in memory.  By
+default, the contents of a File are kept into memory until a certain
+limit is reached, after which the contents of the File are written
+to a temporary file.  This behavior can be disabled by setting this
+value to an appropriately large value (or, for example, infinity,
+such as <cite>float(&#8216;inf&#8217;)</cite>.</td>
+</tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_name</strong> &#8211; The name of the file that this <a class="reference internal" href="#multipart.multipart.File" title="multipart.multipart.File"><tt class="xref py py-class docutils literal"><span class="pre">File</span></tt></a> represents</li>
+<li><strong>field_name</strong> &#8211; The field name that uploaded this file.  Note that this
+can be None, if, for example, the file was uploaded
+with Content-Type application/octet-stream</li>
+<li><strong>config</strong> &#8211; The configuration for this File.  See above for valid
+configuration keys and their corresponding values.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="multipart.multipart.File.actual_file_name">
+<tt class="descname">actual_file_name</tt><a class="headerlink" href="#multipart.multipart.File.actual_file_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The file name that this file is saved as.  Will be None if it&#8217;s not
+currently saved on disk.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.File.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.File.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the File object.  This will actually close the underlying
+file object (whether it&#8217;s a <a class="reference external" href="http://docs.python.org/library/io.html#io.BytesIO" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">io.BytesIO</span></tt></a> or an actual file
+object).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="multipart.multipart.File.field_name">
+<tt class="descname">field_name</tt><a class="headerlink" href="#multipart.multipart.File.field_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The form field associated with this file.  May be None if there isn&#8217;t
+one, for example when we have an application/octet-stream upload.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="multipart.multipart.File.file_name">
+<tt class="descname">file_name</tt><a class="headerlink" href="#multipart.multipart.File.file_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The file name given in the upload request.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="multipart.multipart.File.file_object">
+<tt class="descname">file_object</tt><a class="headerlink" href="#multipart.multipart.File.file_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>The file object that we&#8217;re currently writing to.  Note that this
+will either be an instance of a <a class="reference external" href="http://docs.python.org/library/io.html#io.BytesIO" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">io.BytesIO</span></tt></a>, or a regular file
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.File.finalize">
+<tt class="descname">finalize</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.File.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize the form file.  This will not close the underlying file,
+but simply signal that we are finished writing to the File.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.File.flush_to_disk">
+<tt class="descname">flush_to_disk</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.File.flush_to_disk" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the file is already on-disk, do nothing.  Otherwise, copy from
+the in-memory buffer to a disk file, and then reassign our internal
+file object to this new disk file.</p>
+<p>Note that if you attempt to flush a file that is already on-disk, a
+warning will be logged to this module&#8217;s logger.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="multipart.multipart.File.in_memory">
+<tt class="descname">in_memory</tt><a class="headerlink" href="#multipart.multipart.File.in_memory" title="Permalink to this definition">¶</a></dt>
+<dd><p>A boolean representing whether or not this file object is currently
+stored in-memory or on-disk.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.File.on_data">
+<tt class="descname">on_data</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#multipart.multipart.File.on_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is a callback that will be called whenever data is
+written to the File.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; a bytestring</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.File.on_end">
+<tt class="descname">on_end</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.multipart.File.on_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is called whenever the Field is finalized.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="multipart.multipart.File.size">
+<tt class="descname">size</tt><a class="headerlink" href="#multipart.multipart.File.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total size of this file, counted as the number of bytes that
+currently have been written to the file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.multipart.File.write">
+<tt class="descname">write</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#multipart.multipart.File.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write some data to the File.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; a bytestring</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-multipart.decoders">
+<span id="decoders"></span><h2>Decoders<a class="headerlink" href="#module-multipart.decoders" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="multipart.decoders.Base64Decoder">
+<em class="property">class </em><tt class="descclassname">multipart.decoders.</tt><tt class="descname">Base64Decoder</tt><big>(</big><em>underlying</em><big>)</big><a class="headerlink" href="#multipart.decoders.Base64Decoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>This object provides an interface to decode a stream of Base64 data.  It
+is instantiated with an &#8220;underlying object&#8221;, and whenever a write()
+operation is performed, it will decode the incoming data as Base64, and
+call write() on the underlying object.  This is primarily used for decoding
+form data encoded as Base64, but can be used for other purposes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">multipart.decoders</span> <span class="kn">import</span> <span class="n">Base64Decoder</span>
+<span class="n">fd</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;notb64.txt&quot;</span><span class="p">,</span> <span class="s">&quot;wb&quot;</span><span class="p">)</span>
+<span class="n">decoder</span> <span class="o">=</span> <span class="n">Base64Decoder</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">decoder</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;Zm9vYmFy&quot;</span><span class="p">)</span>       <span class="c"># &quot;foobar&quot; in Base64</span>
+    <span class="n">decoder</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">decoder</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c"># The contents of &quot;notb64.txt&quot; should be &quot;foobar&quot;.</span>
+</pre></div>
+</div>
+<p>This object will also pass all finalize() and close() calls to the
+underlying object, if the underlying object supports them.</p>
+<p>Note that this class maintains a cache of base64 chunks, so that a write of
+arbitrary size can be performed.  You must call <a class="reference internal" href="#multipart.decoders.Base64Decoder.finalize" title="multipart.decoders.Base64Decoder.finalize"><tt class="xref py py-meth docutils literal"><span class="pre">finalize()</span></tt></a> on this
+object after all writes are completed to ensure that all data is flushed
+to the underlying object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>underlying</strong> &#8211; the underlying object to pass writes to</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="multipart.decoders.Base64Decoder.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.decoders.Base64Decoder.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close this decoder.  If the underlying object has a <cite>close()</cite>
+method, this function will call it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.decoders.Base64Decoder.finalize">
+<tt class="descname">finalize</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.decoders.Base64Decoder.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize this object.  This should be called when no more data
+should be written to the stream.  This function can raise a
+<a class="reference internal" href="#multipart.exceptions.DecodeError" title="multipart.exceptions.DecodeError"><tt class="xref py py-class docutils literal"><span class="pre">multipart.exceptions.DecodeError</span></tt></a> if there is some remaining
+data in the cache.</p>
+<p>If the underlying object has a <cite>finalize()</cite> method, this function will
+call it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.decoders.Base64Decoder.write">
+<tt class="descname">write</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#multipart.decoders.Base64Decoder.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes any input data provided, decodes it as base64, and passes it
+on to the underlying object.  If the data provided is invalid base64
+data, then this method will raise
+a <a class="reference internal" href="#multipart.exceptions.DecodeError" title="multipart.exceptions.DecodeError"><tt class="xref py py-class docutils literal"><span class="pre">multipart.exceptions.DecodeError</span></tt></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; base64 data to decode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="multipart.decoders.QuotedPrintableDecoder">
+<em class="property">class </em><tt class="descclassname">multipart.decoders.</tt><tt class="descname">QuotedPrintableDecoder</tt><big>(</big><em>underlying</em><big>)</big><a class="headerlink" href="#multipart.decoders.QuotedPrintableDecoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>This object provides an interface to decode a stream of quoted-printable
+data.  It is instantiated with an &#8220;underlying object&#8221;, in the same manner
+as the <a class="reference internal" href="#multipart.decoders.Base64Decoder" title="multipart.decoders.Base64Decoder"><tt class="xref py py-class docutils literal"><span class="pre">multipart.decoders.Base64Decoder</span></tt></a> class.  This class behaves
+in exactly the same way, including maintaining a cache of quoted-printable
+chunks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>underlying</strong> &#8211; the underlying object to pass writes to</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="multipart.decoders.QuotedPrintableDecoder.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.decoders.QuotedPrintableDecoder.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close this decoder.  If the underlying object has a <cite>close()</cite>
+method, this function will call it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.decoders.QuotedPrintableDecoder.finalize">
+<tt class="descname">finalize</tt><big>(</big><big>)</big><a class="headerlink" href="#multipart.decoders.QuotedPrintableDecoder.finalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize this object.  This should be called when no more data
+should be written to the stream.  This function will not raise any
+exceptions, but it may write more data to the underlying object if
+there is data remaining in the cache.</p>
+<p>If the underlying object has a <cite>finalize()</cite> method, this function will
+call it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="multipart.decoders.QuotedPrintableDecoder.write">
+<tt class="descname">write</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#multipart.decoders.QuotedPrintableDecoder.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes any input data provided, decodes it as quoted-printable, and
+passes it on to the underlying object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; quoted-printable data to decode</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<p>The following are all custom exceptions that python-multipart will raise, for various cases.  Each method that will raise an exception will document it in this documentation.</p>
+<span class="target" id="module-multipart.exceptions"></span><dl class="exception">
+<dt id="multipart.exceptions.DecodeError">
+<em class="property">exception </em><tt class="descclassname">multipart.exceptions.</tt><tt class="descname">DecodeError</tt><a class="headerlink" href="#multipart.exceptions.DecodeError" title="Permalink to this definition">¶</a></dt>
+<dd><p>This exception is raised when there is a decoding error - for example
+with the Base64Decoder or QuotedPrintableDecoder.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="multipart.exceptions.FileError">
+<em class="property">exception </em><tt class="descclassname">multipart.exceptions.</tt><tt class="descname">FileError</tt><a class="headerlink" href="#multipart.exceptions.FileError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for problems with the File class.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="multipart.exceptions.FormParserError">
+<em class="property">exception </em><tt class="descclassname">multipart.exceptions.</tt><tt class="descname">FormParserError</tt><a class="headerlink" href="#multipart.exceptions.FormParserError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base error class for our form parser.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="multipart.exceptions.MultipartParseError">
+<em class="property">exception </em><tt class="descclassname">multipart.exceptions.</tt><tt class="descname">MultipartParseError</tt><a class="headerlink" href="#multipart.exceptions.MultipartParseError" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a specific error that is raised when the MultipartParser detects
+an error while parsing.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="multipart.exceptions.ParseError">
+<em class="property">exception </em><tt class="descclassname">multipart.exceptions.</tt><tt class="descname">ParseError</tt><a class="headerlink" href="#multipart.exceptions.ParseError" title="Permalink to this definition">¶</a></dt>
+<dd><p>This exception (or a subclass) is raised when there is an error while
+parsing something.</p>
+<dl class="attribute">
+<dt id="multipart.exceptions.ParseError.offset">
+<tt class="descname">offset</tt><em class="property"> = -1</em><a class="headerlink" href="#multipart.exceptions.ParseError.offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the offset in the input data chunk (<em>NOT</em> the overall stream) in
+which the parse error occured.  It will be -1 if not specified.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="multipart.exceptions.QuerystringParseError">
+<em class="property">exception </em><tt class="descclassname">multipart.exceptions.</tt><tt class="descname">QuerystringParseError</tt><a class="headerlink" href="#multipart.exceptions.QuerystringParseError" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a specific error that is raised when the QuerystringParser
+detects an error while parsing.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API</a><ul>
+<li><a class="reference internal" href="#main-class">Main Class</a></li>
+<li><a class="reference internal" href="#parsers">Parsers</a></li>
+<li><a class="reference internal" href="#support-classes">Support Classes</a></li>
+<li><a class="reference internal" href="#module-multipart.decoders">Decoders</a></li>
+<li><a class="reference internal" href="#exceptions">Exceptions</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="quickstart.html" title="previous chapter">Quickstart</a></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2013, Andrew Dunham.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>

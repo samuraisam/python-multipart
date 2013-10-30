@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Quickstart &mdash; python-multipart 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="python-multipart 0.0.1 documentation" href="index.html" />
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="Python-Multipart" href="index.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+  
+  
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Python-Multipart"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">python-multipart 0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="quickstart">
+<span id="id1"></span><h1>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h1>
+<p>Python-Multipart foo bar baz</p>
+<div class="section" id="simple-example">
+<h2>Simple Example<a class="headerlink" href="#simple-example" title="Permalink to this headline">¶</a></h2>
+<p>The following example shows a quick example of parsing an incoming request body
+in a simple WSGI application:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">multipart</span>
+
+<span class="k">def</span> <span class="nf">simple_app</span><span class="p">(</span><span class="n">environ</span><span class="p">,</span> <span class="n">start_response</span><span class="p">):</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c"># The following two callbacks just append the name to the return value.</span>
+    <span class="k">def</span> <span class="nf">on_field</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;Parsed field named: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">field_name</span><span class="p">,))</span>
+
+    <span class="k">def</span> <span class="nf">on_file</span><span class="p">(</span><span class="nb">file</span><span class="p">):</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;Parsed file named: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">file</span><span class="o">.</span><span class="n">field_name</span><span class="p">,))</span>
+
+    <span class="c"># Create headers object.  We need to convert from WSGI to the actual</span>
+    <span class="c"># name of the header, since this library does not assume that you are</span>
+    <span class="c"># using WSGI.</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;CONTENT_TYPE&#39;</span><span class="p">]}</span>
+    <span class="k">if</span> <span class="s">&#39;HTTP_X_FILE_NAME&#39;</span> <span class="ow">in</span> <span class="n">environ</span><span class="p">:</span>
+        <span class="n">headers</span><span class="p">[</span><span class="s">&#39;X-File-Name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;HTTP_X_FILE_NAME&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s">&#39;CONTENT_LENGTH&#39;</span> <span class="ow">in</span> <span class="n">environ</span><span class="p">:</span>
+        <span class="n">headers</span><span class="p">[</span><span class="s">&#39;Content-Length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;CONTENT_LENGTH&#39;</span><span class="p">]</span>
+
+    <span class="c"># Parse the form.</span>
+    <span class="n">multipart</span><span class="o">.</span><span class="n">parse_form</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;wsgi.input&#39;</span><span class="p">],</span> <span class="n">on_field</span><span class="p">,</span> <span class="n">on_file</span><span class="p">)</span>
+
+    <span class="c"># Return something.</span>
+    <span class="n">start_response</span><span class="p">(</span><span class="s">&#39;200 OK&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s">&#39;Content-type&#39;</span><span class="p">,</span> <span class="s">&#39;text/plain&#39;</span><span class="p">)])</span>
+    <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+<span class="kn">from</span> <span class="nn">wsgiref.simple_server</span> <span class="kn">import</span> <span class="n">make_server</span>
+<span class="n">httpd</span> <span class="o">=</span> <span class="n">make_server</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="mi">8123</span><span class="p">,</span> <span class="n">simple_app</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Serving on port 8123...&quot;</span><span class="p">)</span>
+<span class="n">httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If you test this with curl, you can see that the parser works:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>curl -ik -F <span class="s2">&quot;foo=bar&quot;</span> http://localhost:8123/
+HTTP/1.0 200 OK
+Date: Sun, 07 Apr 2013 01:40:52 GMT
+Server: WSGIServer/0.1 Python/2.7.3
+Content-type: text/plain
+
+Parsed field named: foo
+</pre></div>
+</div>
+<p>For a more in-depth example showing how the various parts fit together, check
+out the next section.</p>
+</div>
+<div class="section" id="in-depth-example">
+<h2>In-Depth Example<a class="headerlink" href="#in-depth-example" title="Permalink to this headline">¶</a></h2>
+<p>In this section, we&#8217;ll build an application that computes the SHA-256 hash of
+all uploaded files in a streaming manner.</p>
+<p>To start, we need a simple WSGI application.  We could do this with a framework
+like Flask, Django, or Tornado, but for now let&#8217;s stick to plain WSGI:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">multipart</span>
+
+<span class="k">def</span> <span class="nf">simple_app</span><span class="p">(</span><span class="n">environ</span><span class="p">,</span> <span class="n">start_response</span><span class="p">):</span>
+    <span class="n">start_response</span><span class="p">(</span><span class="s">&#39;200 OK&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s">&#39;Content-type&#39;</span><span class="p">,</span> <span class="s">&#39;text/plain&#39;</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="p">[</span><span class="s">&#39;Hashes:</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">wsgiref.simple_server</span> <span class="kn">import</span> <span class="n">make_server</span>
+<span class="n">httpd</span> <span class="o">=</span> <span class="n">make_server</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="mi">8123</span><span class="p">,</span> <span class="n">simple_app</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Serving on port 8123...&quot;</span><span class="p">)</span>
+<span class="n">httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can run this and check with curl that it works properly:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>curl -ik http://localhost:8123/
+HTTP/1.0 200 OK
+Date: Sun, 07 Apr 2013 01:49:03 GMT
+Server: WSGIServer/0.1 Python/2.7.3
+Content-type: text/plain
+Content-Length: 8
+
+Hashes:
+</pre></div>
+</div>
+<p>Good!  It works.  Now, let&#8217;s add some of the code that we need.  What we need
+to do, essentially, is set up the appropriate parser and callbacks so that we
+can access each portion of the request as it arrives, without needing to store
+any parts in memory.</p>
+<p>We can start off by checking if we need to create the parser at all - if the
+Content-Type isn&#8217;t <cite>multipart/form-data</cite>, then we&#8217;re not going to do anything.</p>
+<p>The final code should look like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">multipart</span>
+<span class="kn">from</span> <span class="nn">multipart.multipart</span> <span class="kn">import</span> <span class="n">parse_options_header</span>
+
+<span class="k">def</span> <span class="nf">simple_app</span><span class="p">(</span><span class="n">environ</span><span class="p">,</span> <span class="n">start_response</span><span class="p">):</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c"># Python 2 doesn&#39;t have the &quot;nonlocal&quot; keyword from Python 3, so we get</span>
+    <span class="c"># around it by setting attributes on a dummy object.</span>
+    <span class="k">class</span> <span class="nc">g</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="nb">hash</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c"># This is called when a new part arrives.  We create a new hash object</span>
+    <span class="c"># in this callback.</span>
+    <span class="k">def</span> <span class="nf">on_part_begin</span><span class="p">():</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+
+    <span class="c"># We got some data!  Update our hash.</span>
+    <span class="k">def</span> <span class="nf">on_part_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">hash</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">])</span>
+
+    <span class="c"># Our current part is done, so we can finish the hash.</span>
+    <span class="k">def</span> <span class="nf">on_part_end</span><span class="p">():</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;Part hash: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">hash</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),))</span>
+
+    <span class="c"># Parse the Content-Type header to get the multipart boundary.</span>
+    <span class="n">content_type</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">parse_options_header</span><span class="p">(</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;CONTENT_TYPE&#39;</span><span class="p">])</span>
+    <span class="n">boundary</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">b</span><span class="s">&#39;boundary&#39;</span><span class="p">)</span>
+
+    <span class="c"># Callbacks dictionary.</span>
+    <span class="n">callbacks</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;on_part_begin&#39;</span><span class="p">:</span> <span class="n">on_part_begin</span><span class="p">,</span>
+        <span class="s">&#39;on_part_data&#39;</span><span class="p">:</span> <span class="n">on_part_data</span><span class="p">,</span>
+        <span class="s">&#39;on_part_end&#39;</span><span class="p">:</span> <span class="n">on_part_end</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c"># Create the parser.</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">multipart</span><span class="o">.</span><span class="n">MultipartParser</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="n">callbacks</span><span class="p">)</span>
+
+    <span class="c"># The input stream is from the WSGI environ.</span>
+    <span class="n">inp</span> <span class="o">=</span> <span class="n">environ</span><span class="p">[</span><span class="s">&#39;wsgi.input&#39;</span><span class="p">]</span>
+
+    <span class="c"># Feed the parser with data from the request.</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;CONTENT_LENGTH&#39;</span><span class="p">])</span>
+    <span class="k">while</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">to_read</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">to_read</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="n">size</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">!=</span> <span class="n">to_read</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="n">start_response</span><span class="p">(</span><span class="s">&#39;200 OK&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="s">&#39;Content-type&#39;</span><span class="p">,</span> <span class="s">&#39;text/plain&#39;</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+<span class="kn">from</span> <span class="nn">wsgiref.simple_server</span> <span class="kn">import</span> <span class="n">make_server</span>
+<span class="n">httpd</span> <span class="o">=</span> <span class="n">make_server</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="mi">8123</span><span class="p">,</span> <span class="n">simple_app</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&quot;Serving on port 8123...&quot;</span><span class="p">)</span>
+<span class="n">httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>And you can see that this works:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;Foo bar&quot;</span> &gt; /tmp/test.txt
+<span class="nv">$ </span>shasum -a 256 /tmp/test.txt
+0b64696c0f7ddb9e3435341720988d5455b3b0f0724688f98ec8e6019af3d931  /tmp/test.txt
+<span class="nv">$ </span>curl -ik -F <span class="nv">file</span><span class="o">=</span>@/tmp/test.txt http://localhost:8123/
+HTTP/1.0 200 OK
+Date: Sun, 07 Apr 2013 02:09:10 GMT
+Server: WSGIServer/0.1 Python/2.7.3
+Content-type: text/plain
+
+Hashes:
+Part <span class="nb">hash</span>: 0b64696c0f7ddb9e3435341720988d5455b3b0f0724688f98ec8e6019af3d931
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Quickstart</a><ul>
+<li><a class="reference internal" href="#simple-example">Simple Example</a></li>
+<li><a class="reference internal" href="#in-depth-example">In-Depth Example</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Python-Multipart</a></li>
+      <li>Next: <a href="api.html" title="next chapter">API</a></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  <div class="footer">
+    &copy; Copyright 2013, Andrew Dunham.
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  
+  </body>
+</html>
