@@ -59,6 +59,64 @@
 <span id="id1"></span><h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
 <span class="target" id="module-multipart"></span><p>This section of the documentation covers all of the public interfaces of
 python-multipart.</p>
+<div class="section" id="helper-functions">
+<h2>Helper Functions<a class="headerlink" href="#helper-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="multipart.multipart.parse_form">
+<tt class="descclassname">multipart.multipart.</tt><tt class="descname">parse_form</tt><big>(</big><em>headers</em>, <em>input_stream</em>, <em>on_field</em>, <em>on_file</em>, <em>chunk_size=1048576</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#multipart.multipart.parse_form" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is useful if you just want to parse a request body,
+without too much work.  Pass it a dictionary-like object of the request&#8217;s
+headers, and a file-like object for the input stream, along with two
+callbacks that will get called whenever a field or file is parsed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>headers</strong> &#8211; A dictionary-like object of HTTP headers.  The only
+required header is Content-Type.</li>
+<li><strong>input_stream</strong> &#8211; A file-like object that represents the request body.
+The read() method must return bytestrings.</li>
+<li><strong>on_field</strong> &#8211; Callback to call with each parsed field.</li>
+<li><strong>on_file</strong> &#8211; Callback to call with each parsed file.</li>
+<li><strong>chunk_size</strong> &#8211; The maximum size to read from the input stream and write
+to the parser at one time.  Defaults to 1 MiB.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="multipart.multipart.create_form_parser">
+<tt class="descclassname">multipart.multipart.</tt><tt class="descname">create_form_parser</tt><big>(</big><em>headers</em>, <em>on_field</em>, <em>on_file</em>, <em>trust_x_headers=False</em>, <em>config={}</em><big>)</big><a class="headerlink" href="#multipart.multipart.create_form_parser" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is a helper function to aid in creating a FormParser
+instances.  Given a dictionary-like headers object, it will determine
+the correct information needed, instantiate a FormParser with the
+appropriate values and given callbacks, and then return the corresponding
+parser.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>headers</strong> &#8211; A dictionary-like object of HTTP headers.  The only
+required header is Content-Type.</li>
+<li><strong>on_field</strong> &#8211; Callback to call with each parsed field.</li>
+<li><strong>on_file</strong> &#8211; Callback to call with each parsed file.</li>
+<li><strong>trust_x_headers</strong> &#8211; Whether or not to trust information received from
+certain X-Headers - for example, the file name from
+X-File-Name.</li>
+<li><strong>config</strong> &#8211; Configuration variables to pass to the FormParser.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="main-class">
 <h2>Main Class<a class="headerlink" href="#main-class" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -977,6 +1035,7 @@ detects an error while parsing.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">API</a><ul>
+<li><a class="reference internal" href="#helper-functions">Helper Functions</a></li>
 <li><a class="reference internal" href="#main-class">Main Class</a></li>
 <li><a class="reference internal" href="#parsers">Parsers</a></li>
 <li><a class="reference internal" href="#support-classes">Support Classes</a></li>
